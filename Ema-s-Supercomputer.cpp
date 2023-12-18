@@ -1,3 +1,18 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+string ltrim(const string &);
+string rtrim(const string &);
+vector<string> split(const string &);
+
+/*
+ * Complete the 'twoPluses' function below.
+ *
+ * The function is expected to return an INTEGER.
+ * The function accepts STRING_ARRAY grid as parameter.
+ */
+
 int twoPluses(vector<string> grid)
 {
     int r = grid.size();
