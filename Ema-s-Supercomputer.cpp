@@ -12,112 +12,89 @@ vector<string> split(const string &);
  * The function is expected to return an INTEGER.
  * The function accepts STRING_ARRAY grid as parameter.
  */
+int twoPluses(vector<string> grid) {
+    int rows = grid.size();
+    int cols = grid[0].size();
 
-int twoPluses(vector<string> grid)
-{
-    int r = grid.size();
-    int c = grid[0].size();
+    vector<vector<int>> plusSizes(rows, vector<int>(cols, 0));
 
-    std::vector<std::vector<int>> size;
-    size.assign(r, vector<int>(c, 0));
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            int plusSize = -1;
+            int minDist = min(min(i, rows - 1 - i), min(j, cols - 1 - j));
 
-    for (int i = 0; i < r; ++i)
-    {
-        for (int j = 0; j < c; ++j)
-        {
-            int count = -1;
-            int min = std::min(std::min(i, r-1-i), std::min(j, c-1-j));
-
-            for (int k = 0; k <= min; ++k)
-            {
-                if (grid[i+k][j] != 'B' && grid[i-k][j] != 'B'
-                    && grid[i][j+k] != 'B' && grid[i][j-k] != 'B')
-                {
-                    count = k;
-                }
-                else
-                {
+            for (int k = 0; k <= minDist; ++k) {
+                if (grid[i + k][j] != 'B' && grid[i - k][j] != 'B'
+                    && grid[i][j + k] != 'B' && grid[i][j - k] != 'B') {
+                    plusSize = k;
+                } else {
                     break;
                 }
             }
 
-            size[i][j] = count;
+            plusSizes[i][j] = plusSize;
         }
     }
 
-    int count = 0;
+    int totalPluses = 0;
 
-    for (int i = 0; i < r; ++i)
-    {
-        for (int j = 0; j < c; ++j)
-        {
-            if (size[i][j] >= 0)
-            {
-                count += 1;
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if (plusSizes[i][j] >= 0) {
+                totalPluses += 1;
             }
         }
     }
 
-    std::vector<std::vector<int>> plus;
-    plus.assign(count, vector<int>(3, 0));
+    vector<vector<int>> plusCoordinates;
+    plusCoordinates.reserve(totalPluses);
 
-    std::vector<int> result;
-    result.resize(count * (count - 1));
+    vector<int> result(totalPluses * (totalPluses - 1), 0);
 
-    int k = 0;
+    int plusIndex = 0;
 
-    for (int i = 0; i < r; ++i)
-    {
-        for (int j = 0; j < c; ++j)
-        {
-            if (size[i][j] >= 0)
-            {
-                plus[k][0] = i;
-                plus[k][1] = j;
-                plus[k][2] = size[i][j];
-                k++;
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if (plusSizes[i][j] >= 0) {
+                plusCoordinates.push_back({i, j, plusSizes[i][j]});
             }
         }
     }
 
-    k = 0;
-    int r1 = 0, r2 = 0, c1 = 0, c2 = 0, s1 = 0, s2 = 0;
+    plusIndex = 0;
+    int row1 = 0, row2 = 0, col1 = 0, col2 = 0, size1 = 0, size2 = 0;
 
-    for (int i = 0; i < plus.size(); ++i)
-    {
-        for (int j = 0; j < plus.size(); ++j)
-        {
-            if (i != j)
-            {
-                r1 = plus[i][0];
-                r2 = plus[j][0];
-                c1 = plus[i][1];
-                c2 = plus[j][1];
+    for (size_t i = 0; i < plusCoordinates.size(); ++i) {
+        for (size_t j = 0; j < plusCoordinates.size(); ++j) {
+            if (i != j) {
+                row1 = plusCoordinates[i][0];
+                row2 = plusCoordinates[j][0];
+                col1 = plusCoordinates[i][1];
+                col2 = plusCoordinates[j][1];
 
-                for (s1 = 0; s1 <= plus[i][2]; s1++)
-                {
-                    for (s2 = 0; s2 <= plus[j][2]; s2++)
-                    {
-                        if (std::abs(r1 - r2) > s1 + s2
-                            || std::abs(c1 - c2) > s1 + s2
-                            || (std::abs(r1 - r2) > std::max(s1, s2) && c1 != c2)
-                            || (std::abs(c1 - c2) > std::max(s1, s2) && r1 != r2)
-                            || (std::abs(r1 - r2) > std::min(s1, s2)
-                                && std::abs(c1 - c2) > std::min(s1, s2)))
-                        {
-                            if (result[k] < (4 * s1 + 1) * (4 * s2 + 1))
-                            {
-                                result[k] = (4 * s1 + 1) * (4 * s2 + 1);
+                int absRowDiff = abs(row1 - row2);
+                int absColDiff = abs(col1 - col2);
+
+                for (size1 = 0; size1 <= plusCoordinates[i][2]; ++size1) {
+                    for (size2 = 0; size2 <= plusCoordinates[j][2]; ++size2) {
+                        if (absRowDiff > size1 + size2 || absColDiff > size1 + size2
+                            || (absRowDiff > max(size1, size2) && col1 != col2)
+                            || (absColDiff > max(size1, size2) && row1 != row2)
+                            || (absRowDiff > min(size1, size2) && absColDiff > min(size1, size2))) {
+                            int factor1 = 4 * size1 + 1;
+                            int factor2 = 4 * size2 + 1;
+
+                            if (result[plusIndex] < factor1 * factor2) {
+                                result[plusIndex] = factor1 * factor2;
                             }
                         }
                     }
                 }
 
-                k++;
+                plusIndex++;
             }
         }
     }
 
     return *max_element(result.begin(), result.end());
 }
-
