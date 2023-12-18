@@ -12,6 +12,7 @@ vector<string> split(const string &);
  * The function is expected to return an INTEGER.
  * The function accepts STRING_ARRAY grid as parameter.
  */
+
 int twoPluses(vector<string> grid) {
     int rows = grid.size();
     int cols = grid[0].size();
