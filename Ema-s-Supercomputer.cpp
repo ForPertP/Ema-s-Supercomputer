@@ -99,3 +99,35 @@ int twoPluses(vector<string> grid) {
 
     return *max_element(result.begin(), result.end());
 }
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string first_multiple_input_temp;
+    getline(cin, first_multiple_input_temp);
+
+    vector<string> first_multiple_input = split(rtrim(first_multiple_input_temp));
+
+    int n = stoi(first_multiple_input[0]);
+
+    int m = stoi(first_multiple_input[1]);
+
+    vector<string> grid(n);
+
+    for (int i = 0; i < n; i++) {
+        string grid_item;
+        getline(cin, grid_item);
+
+        grid[i] = grid_item;
+    }
+
+    int result = twoPluses(grid);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
