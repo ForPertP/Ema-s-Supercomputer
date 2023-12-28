@@ -1,5 +1,4 @@
     public static int twoPluses(List<String> grid) {
-    // Write your code here
         int rows = grid.size();
         int cols = grid.get(0).length();
 
